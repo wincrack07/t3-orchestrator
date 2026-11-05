@@ -124,9 +124,9 @@ Copy this folder into your agent's skills directory: `~/.claude/skills/t3-orches
 
 **Try it with prompts like:**
 
-> *"Orchestrate everything we just discussed."*
-> *"Use the t3-orchestrator skill on this list: …"*
-> *"Split this refactor across T3 threads and review it with another model."*
+> - *"Orchestrate everything we just discussed."*
+> - *"Use the t3-orchestrator skill on this list: …"*
+> - *"Split this refactor across T3 threads and review it with another model."*
 
 <details>
 <summary><b>Requirements</b></summary>
