@@ -47,9 +47,8 @@ flowchart TB
   end
   subgraph run [" "]
     direction LR
-    E([5 · Monitor<br/>answer children]) --> G([6 · Integrate<br/>review · tests · e2e]) --> H([7 · Deliver<br/>PRs + what's verified])
-    E -- usage ran out --> F([Fail over<br/>same worktree, new account])
-    F --> E
+    E([5 · Monitor<br/>answer children]) -. usage ran out .-> F([Fail over<br/>same worktree, new account]) -.-> G([6 · Integrate<br/>review · tests · e2e]) --> H([7 · Deliver<br/>PRs + what's verified])
+    E --> G
   end
   prep --> run
 
