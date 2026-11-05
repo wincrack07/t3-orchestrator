@@ -51,7 +51,7 @@ flowchart TB
     E -- usage ran out --> F([Fail over<br/>same worktree, new account])
     F --> E
   end
-  D --> E
+  prep --> run
 
   classDef base fill:#fdfcfa,stroke:#2b1b0f,stroke-width:2px,color:#2b1b0f;
   classDef lead fill:#f1b82d,stroke:#2b1b0f,stroke-width:2px,color:#2b1b0f;
