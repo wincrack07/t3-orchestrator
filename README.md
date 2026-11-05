@@ -39,21 +39,28 @@ Then, in a [T3 Code](https://github.com/pingdotgg/t3code) thread: **"orchestrate
 ## ✦ How a run flows
 
 ```mermaid
-%%{init: {'theme':'base','themeVariables':{'primaryColor':'#fdfcfa','primaryTextColor':'#2b1b0f','primaryBorderColor':'#2b1b0f','lineColor':'#4b3b2f','secondaryColor':'#dce7f5','tertiaryColor':'#fdfcfa','fontFamily':'Figtree, ui-sans-serif, system-ui, sans-serif'}}}%%
-flowchart LR
-  A([Discover<br/>providers · models · limits]) --> B([Review repo<br/>git · branches · rules])
-  B --> C([Plan<br/>tasks · owners · criteria])
-  C --> D{{Delegate<br/>role → model + effort}}
-  D --> E([Monitor<br/>answer children])
-  E -->|usage ran out| F([Fail over<br/>same worktree, new account])
-  F --> E
-  E --> G([Integrate<br/>review · tests · e2e])
-  G --> H([Deliver<br/>branches · PRs · what's verified])
+%%{init: {'theme':'base','themeVariables':{'primaryColor':'#fdfcfa','primaryTextColor':'#2b1b0f','primaryBorderColor':'#2b1b0f','lineColor':'#6f6259','edgeLabelBackground':'#fdfcfa','fontFamily':'Figtree, ui-sans-serif, system-ui, sans-serif','fontSize':'16px'}}}%%
+flowchart TB
+  subgraph prep [" "]
+    direction LR
+    A([1 · Discover<br/>providers · models · limits]) --> B([2 · Review repo<br/>git · branches · rules]) --> C([3 · Plan<br/>tasks · owners · criteria]) --> D{{4 · Delegate<br/>role → model + effort}}
+  end
+  subgraph run [" "]
+    direction LR
+    E([5 · Monitor<br/>answer children]) --> G([6 · Integrate<br/>review · tests · e2e]) --> H([7 · Deliver<br/>PRs + what's verified])
+    E -- usage ran out --> F([Fail over<br/>same worktree, new account])
+    F --> E
+  end
+  D --> E
 
+  classDef base fill:#fdfcfa,stroke:#2b1b0f,stroke-width:2px,color:#2b1b0f;
   classDef lead fill:#f1b82d,stroke:#2b1b0f,stroke-width:2px,color:#2b1b0f;
-  classDef warn fill:#dce7f5,stroke:#2b1b0f,stroke-width:2px,color:#2b1b0f;
+  classDef sky fill:#dce7f5,stroke:#2b1b0f,stroke-width:2px,color:#2b1b0f;
+  class A,B,C,E,G,H base;
   class D lead;
-  class F warn;
+  class F sky;
+  style prep fill:none,stroke:none;
+  style run fill:none,stroke:none;
 ```
 
 ## ✦ Routing at a glance
@@ -73,15 +80,22 @@ It escalates only after a failed attempt: **effort first, then model.** The full
 ## ✦ When an account runs out
 
 ```mermaid
-%%{init: {'theme':'base','themeVariables':{'primaryColor':'#fdfcfa','primaryTextColor':'#2b1b0f','primaryBorderColor':'#2b1b0f','lineColor':'#4b3b2f','fontFamily':'Figtree, ui-sans-serif, system-ui, sans-serif'}}}%%
-stateDiagram-v2
-  direction LR
-  [*] --> available
-  available --> limited: usage limit hit
-  limited --> probing: reset time passes
-  probing --> available: small task succeeds
-  probing --> limited: limit again, wait ×2
-  available --> broken: auth or binary error
+%%{init: {'theme':'base','themeVariables':{'primaryColor':'#fdfcfa','primaryTextColor':'#2b1b0f','primaryBorderColor':'#2b1b0f','lineColor':'#6f6259','edgeLabelBackground':'#fdfcfa','fontFamily':'Figtree, ui-sans-serif, system-ui, sans-serif','fontSize':'16px'}}}%%
+flowchart LR
+  AV([available]) -- usage limit hit --> LI([limited])
+  LI -- reset time passes --> PR([probing])
+  PR -- small task succeeds --> AV
+  PR -- limit again · wait ×2 --> LI
+  AV -. auth or binary error .-> BR([broken])
+
+  classDef ok fill:#dce7f5,stroke:#2b1b0f,stroke-width:2px,color:#2b1b0f;
+  classDef stop fill:#2b1b0f,stroke:#2b1b0f,stroke-width:2px,color:#fdfcfa;
+  classDef probe fill:#f1b82d,stroke:#2b1b0f,stroke-width:2px,color:#2b1b0f;
+  classDef off fill:#e7e0d6,stroke:#6f6259,stroke-width:2px,color:#4b3b2f,stroke-dasharray:5 4;
+  class AV ok;
+  class LI stop;
+  class PR probe;
+  class BR off;
 ```
 
 1. **Record** the account and its reset time in a machine-wide ledger (`~/.local/state/t3-orchestrator/providers.json`).
